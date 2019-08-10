@@ -20,13 +20,13 @@ Hao Zhou, Sunil Hadap, Kalyan Sunkavalli, David W. Jacobs. In [ICCV, 2019]
 </p>
 
 ### Overview
- - (0) Test script for 512x512 images: `testNetwork_demo_512.py`
- - (1) Test script for 1024x1024 images: `testNetwork_demo_1024.py`
+ - Test script for 512x512 images: `testNetwork_demo_512.py`
+ - Test script for 1024x1024 images: `testNetwork_demo_1024.py`
 
 ### Dependencies ###
 <p>pytorch >= 1.0.0</p>
 <p>opencv >= 4.0.0</p>
-<P>[shtools](https://shtools.oca.eu/shtools) (optional) </p>
+<P>[shtools](https://shtools.oca.eu/shtools/)</p>
 
 ### Notes
 We include an example image and seven example lightings in data. Note that different methods may have different coordinate system for Spherical Harmonics (SH), you may need to change the coordiante system if you use SH lighting from other sources. The coordinate system of our method is in accordance with shtools, we provide a function utils_normal.py in utils to help you tansfer the coordinate system from [bip2017](https://gravis.dmi.unibas.ch/PMM/data/bip/) and [sfsNet](https://senguptaumd.github.io/SfSNet/) to our coordinate system. To use utils_normal.py you need to install shtools.
