@@ -3,7 +3,6 @@
 '''
 import numpy as np
 import sys
-sys.path.append('../../utils')
 from utils_shtools import *
 from pyshtools.rotate import djpi2, SHRotateRealCoef
 
