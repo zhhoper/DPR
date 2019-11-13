@@ -37,7 +37,7 @@ If you use this code for your research, please consider citing:
 ```
 @InProceedings{DPR,
   title={Deep Single Portrait Image Relighting},
-  author = {Hao Zhou, Sunil Hadap, Kalyan Sunkavalli, David W. Jacobs},
+  author = {Hao Zhou and Sunil Hadap and Kalyan Sunkavalli and David W. Jacobs},
   booktitle={International Conference on Computer Vision (ICCV)},
   year={2019}
 }
