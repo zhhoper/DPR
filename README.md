@@ -20,8 +20,9 @@ Hao Zhou, Sunil Hadap, Kalyan Sunkavalli, David W. Jacobs. In ICCV, 2019
 </p>
 
 ### Overview
- - Test script for 512x512 images: `testNetwork_demo_512.py`
- - Test script for 1024x1024 images: `testNetwork_demo_1024.py`
+```bash
+python3 inference.py
+```
 
 ### Dependencies ###
 <p> pytorch >= 1.0.0 </p>
