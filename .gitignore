@@ -319,4 +319,7 @@ poetry.toml
 
 *.pyc
 *.sh
+.idea/
 data/images_test/
+result_512/
+result_1024/

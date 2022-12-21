@@ -1,9 +1,11 @@
 '''
     define some helper functions for shtools
+    reference: http://www.weizmann.ac.il/math/ronen/sites/math.ronen/files/uploads/basri_jacobs_-_lambertian_reflectance_and_linear_subspaces.pdf
 '''
 import pyshtools
 from pyshtools.expand import MakeGridDH
 import numpy as np
+
 
 def shtools_matrix2vec(SH_matrix):
     '''
@@ -22,6 +24,7 @@ def shtools_matrix2vec(SH_matrix):
             count = count + 1
     return vec_SH
 
+
 def shtools_sh2matrix(coefficients, degree):
     '''
         convert vector of sh to matrix
@@ -35,6 +38,7 @@ def shtools_sh2matrix(coefficients, degree):
             coeffs_matrix[1, l, m] = coefficients[current_zero_index - m]
         current_zero_index += 2*(l+1)
     return coeffs_matrix 
+
 
 def shtools_getSH(envMap, order=5):
     '''
