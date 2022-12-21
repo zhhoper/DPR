@@ -319,5 +319,4 @@ poetry.toml
 
 *.pyc
 *.sh
-log_test/
-
+data/images_test/

@@ -32,7 +32,7 @@ normal = np.reshape(normal, (-1, 3))
 # -----------------------------------------------------------------
 
 
-mode = 'mode_512'
+mode = 'mode_1024'
 
 # load model
 if mode == 'mode_512':
@@ -63,7 +63,7 @@ inputL = inputL.transpose((0, 1))
 inputL = inputL[None, None, ...]
 inputL = Variable(torch.from_numpy(inputL).to(device))
 
-for i in range(7):
+for i in range(2):
     sh = np.loadtxt(os.path.join(configs["lightFolder"], 'rotate_light_{:02d}.txt'.format(i)))
     sh = sh[0:9]
     sh = sh * 0.7
@@ -86,7 +86,12 @@ for i in range(7):
     #  rendering images using the network
     sh = np.reshape(sh, (1, 9, 1, 1)).astype(np.float32)
     sh = Variable(torch.from_numpy(sh).to(device))
-    outputImg, outputSH = my_network(inputL, sh, 0)
+
+    if mode == "mode_1024":
+        outputImg, _, outputSH, _ = my_network(inputL, sh, 0)
+    else:
+        outputImg, outputSH = my_network(inputL, sh, 0)
+
     outputImg = outputImg[0].cpu().data.numpy()
     outputImg = outputImg.transpose((1, 2, 0))
     outputImg = np.squeeze(outputImg)
