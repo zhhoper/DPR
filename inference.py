@@ -1,5 +1,6 @@
 import os
 
+from alive_progress import alive_bar
 from torch.autograd import Variable
 import torch
 import cv2
@@ -7,8 +8,35 @@ import cv2
 from configs.load_configs import configs
 from utils.utils_SH import *
 
+def video(total=72):
+    print(f'Processing video ---{os.path.basename(path_video)}--- \nPlease Uong mieng nuoc & an mieng banh de...')
+    frame_width = int(cap.get(3))
+    frame_height = int(cap.get(4))
+    size = (frame_width, frame_height)
+    fps = 1
+    os.makedirs('results/', exist_ok=True)
+    saved_path = f'results/{name}' + path_video.split('/')[-1]
+    out = cv2.VideoWriter(saved_path,
+                          cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
+                          fps, size)
 
-def create_sh():
+    with alive_bar(total=total, theme='musical', length=150) as bar:
+        while True:
+            _, frame = cap.read()
+            try:
+                frame_matting = predictor.run(frame)
+
+                out.write(frame)
+                bar()
+            except KeyboardInterrupt:
+                print("Stoped!")
+                out.release()
+                break
+    out.release()
+    print(f"Video saved in: {saved_path}")
+
+
+def create_sh(i):
     # rendering half-sphere
     sh = np.loadtxt(os.path.join(configs["lightFolder"], 'rotate_light_{:02d}.txt'.format(i)))
     sh = sh[0:9]
@@ -55,7 +83,7 @@ Lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
 
 inputL = process_inputL(Lab)
 
-for i in range(7):
+for i in range(72):
     sh = create_sh(i)
     normal, valid = create_normal_and_valid(img_size=256)
     shading = get_shading(normal, sh)
@@ -66,7 +94,10 @@ for i in range(7):
     shading = (shading * 255.0).astype(np.uint8)
     shading = np.reshape(shading, (256, 256))
     shading = shading * valid
-    cv2.imwrite(os.path.join(configs[mode]["saveFolder"], 'light_{:02d}.png'.format(i)), shading)
+
+    # Save visualize SH
+    if configs["saveVisualize"]:
+        cv2.imwrite(os.path.join(configs[mode]["saveFolder"], 'light_{:02d}.png'.format(i)), shading)
 
     #  rendering images using the network
     sh = np.reshape(sh, (1, 9, 1, 1)).astype(np.float32)
