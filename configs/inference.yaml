@@ -1,4 +1,4 @@
-mode: mode_512
+mode: mode_1024
 
 mode_512:
   checkpoint: trained_model_03.t7
@@ -12,6 +12,9 @@ mode_1024:
   saveFolder: result_1024
   windowName: Result Mode 1024
 
-lightFolder: data/example_light/
+saveVisualize: False
+lightFolder: data/example_light/rotate_light_3/txt/
 path_image: data/images_test/face1.jpg
 modelFolder: trained_model/
+showResult: True
+saveResult: False
