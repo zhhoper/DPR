@@ -323,3 +323,4 @@ poetry.toml
 data/images_test/
 result_512/
 result_1024/
+results/

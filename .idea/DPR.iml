@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/result_1024/face1" />
       <excludeFolder url="file://$MODULE_DIR$/result_1024/face2" />
       <excludeFolder url="file://$MODULE_DIR$/result_1024/timi2" />
+      <excludeFolder url="file://$MODULE_DIR$/results" />
     </content>
     <orderEntry type="jdk" jdkName="aphrodite (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

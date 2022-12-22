@@ -10,13 +10,13 @@ Hao Zhou, Sunil Hadap, Kalyan Sunkavalli, David W. Jacobs. In ICCV, 2019
 <img src="result_512/obama/5.jpg" width="120px" >
 <img src="result_512/obama/6.jpg" width="120px" >
 </p>
-<p><img src="result_512/light_00.png" width="120px" >
-<img src="result_512/light_01.png" width="120px" >
-<img src="result_512/light_02.png" width="120x" >
-<img src="result_512/light_03.png" width="120px" >
-<img src="result_512/light_04.png" width="120px" >
-<img src="result_512/light_05.png" width="120px" >
-<img src="result_512/light_06.png" width="120px" >
+<p><img src="data/example_light/rotate_light_3/visualize/light_00.png" width="120px" >
+<img src="data/example_light/rotate_light_3/visualize/light_01.png" width="120px" >
+<img src="data/example_light/rotate_light_3/visualize/light_02.png" width="120x" >
+<img src="data/example_light/rotate_light_3/visualize/light_03.png" width="120px" >
+<img src="data/example_light/rotate_light_3/visualize/light_04.png" width="120px" >
+<img src="data/example_light/rotate_light_3/visualize/light_05.png" width="120px" >
+<img src="data/example_light/rotate_light_3/visualize/light_06.png" width="120px" >
 </p>
 
 ### Overview

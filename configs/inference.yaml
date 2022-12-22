@@ -16,5 +16,5 @@ saveVisualize: False
 lightFolder: data/example_light/rotate_light_3/txt/
 path_image: data/images_test/face1.jpg
 modelFolder: trained_model/
-showResult: True
+showResult: False
 saveResult: False

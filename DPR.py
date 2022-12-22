@@ -14,6 +14,32 @@ else:
     from model.defineHourglass_1024_gray_skip_matchFeature import *
 
 
+def video(predictor, n_lighting, fps=5, name=os.path.basename(configs['path_image']).split('.')[0]):
+    print(f'Processing image {name} ------ \nPlease Uong mieng nuoc & an mieng banh de...')
+    image = cv2.imread(configs["path_image"])
+    frame_width = image.shape[1] * 2
+    frame_height = image.shape[0]
+    size = (frame_width, frame_height)
+    os.makedirs('results/', exist_ok=True)
+    saved_path = f'results/{name}.mp4'
+    out = cv2.VideoWriter(saved_path,
+                          cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
+                          fps, size)
+
+    with alive_bar(total=n_lighting, theme='musical', length=200) as bar:
+        for i in range(n_lighting):
+            try:
+                frame = predictor(i)
+                out.write(frame)
+                bar()
+            except KeyboardInterrupt:
+                print("Stoped!")
+                out.release()
+                break
+    out.release()
+    print(f"Video saved in: {saved_path}")
+
+
 class DPR:
     def __init__(self, img=configs["path_image"], device=None):
         self.mode = configs["mode"]
@@ -89,54 +115,56 @@ class DPR:
         shading = np.matmul(sh_basis, SH)
         return shading
 
-    def __call__(self, n_lighting):
-        for i in range(n_lighting):
-            sh = self._create_sh(i)
-            normal, valid = self._create_normal_and_valid()
-            shading = self._get_shading(normal, sh)
-            value = np.percentile(shading, 10)
-            ind = shading > value
-            shading[ind] = value
-            shading = (shading - np.min(shading)) / (np.max(shading) - np.min(shading))
-            shading = (shading * 255.0).astype(np.uint8)
-            shading = np.reshape(shading, (256, 256))
-            shading = shading * valid
+    def __call__(self, i):
+        # for i in range(n_lighting):
+        sh = self._create_sh(i)
+        normal, valid = self._create_normal_and_valid()
+        shading = self._get_shading(normal, sh)
+        value = np.percentile(shading, 10)
+        ind = shading > value
+        shading[ind] = value
+        shading = (shading - np.min(shading)) / (np.max(shading) - np.min(shading))
+        shading = (shading * 255.0).astype(np.uint8)
+        shading = np.reshape(shading, (256, 256))
+        shading = shading * valid
 
-            # Save visualize SH
-            if configs["saveVisualize"]:
-                cv2.imwrite(os.path.join(configs[self.mode]["saveFolder"], 'light_{:02d}.png'.format(i)), shading)
+        # Save visualize SH
+        if configs["saveVisualize"]:
+            cv2.imwrite(os.path.join(configs[self.mode]["saveFolder"], 'light_{:02d}.png'.format(i)), shading)
 
-            #  rendering images using the network
-            sh = np.reshape(sh, (1, 9, 1, 1)).astype(np.float32)
-            sh = Variable(torch.from_numpy(sh).to(self.device))
+        #  rendering images using the network
+        sh = np.reshape(sh, (1, 9, 1, 1)).astype(np.float32)
+        sh = Variable(torch.from_numpy(sh).to(self.device))
 
-            if self.mode == "mode_1024":
-                outputImg, _, outputSH, _ = self.my_network(self.inputL, sh, 0)
-            else:
-                outputImg, outputSH = self.my_network(self.inputL, sh, 0)
+        if self.mode == "mode_1024":
+            outputImg, _, outputSH, _ = self.my_network(self.inputL, sh, 0)
+        else:
+            outputImg, outputSH = self.my_network(self.inputL, sh, 0)
 
-            outputImg = self._process_output(outputImg)
-            self.Lab[:, :, 0] = outputImg
-            resultLab = cv2.cvtColor(self.Lab, cv2.COLOR_LAB2BGR)
-            resultLab = cv2.resize(resultLab, (self.col, self.row))
+        outputImg = self._process_output(outputImg)
+        self.Lab[:, :, 0] = outputImg
+        resultLab = cv2.cvtColor(self.Lab, cv2.COLOR_LAB2BGR)
+        resultLab = cv2.resize(resultLab, (self.col, self.row))
 
-            final = cv2.hconcat([self.img_ori, resultLab])
+        final = cv2.hconcat([self.img_ori, resultLab])
 
-            if configs["showResult"]:
-                cv2.imshow("shading", shading)
-                cv2.imshow(configs[self.mode]["windowName"], final)
-                cv2.waitKey(0)
+        if configs["showResult"]:
+            cv2.imshow("shading", shading)
+            cv2.imshow(configs[self.mode]["windowName"], final)
+            cv2.waitKey(0)
 
-            if configs["saveResult"]:
-                path_saveFolder = os.path.join(configs[self.mode]["saveFolder"],
-                                               os.path.basename(configs["path_image"])[:-4])
-                os.makedirs(path_saveFolder, exist_ok=True)
+        if configs["saveResult"]:
+            path_saveFolder = os.path.join(configs[self.mode]["saveFolder"],
+                                           os.path.basename(configs["path_image"])[:-4])
+            os.makedirs(path_saveFolder, exist_ok=True)
 
-                cv2.imwrite(os.path.join(path_saveFolder, str(i) + ".jpg"), resultLab)
-                cv2.imwrite(os.path.join(path_saveFolder, "hconcat_" + str(i) + ".jpg"), final)
+            cv2.imwrite(os.path.join(path_saveFolder, str(i) + ".jpg"), resultLab)
+            cv2.imwrite(os.path.join(path_saveFolder, "hconcat_" + str(i) + ".jpg"), final)
+
+        return final
 
 
 if __name__ == "__main__":
     dpr = DPR()
     n_lighting = len(os.listdir(configs["lightFolder"]))
-    dpr(n_lighting)
+    video(predictor=dpr, fps=5, n_lighting=n_lighting, name='face1_light3')
