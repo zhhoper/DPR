@@ -1,0 +1,20 @@
+mode: mode_1024
+
+mode_512:
+  checkpoint: trained_model_03.t7
+  size: 512
+  saveFolder: result_512
+  windowName: Result Mode 512
+
+mode_1024:
+  checkpoint: trained_model_1024_03.t7
+  size: 1024
+  saveFolder: result_1024
+  windowName: Result Mode 1024
+
+saveVisualize: False
+lightFolder: data/example_light/rotate_light_3/txt/
+path_image: data/images_test/face1.jpg
+modelFolder: trained_model/
+showResult: False
+saveResult: False

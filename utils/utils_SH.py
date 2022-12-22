@@ -2,6 +2,26 @@
     construct shading using sh basis
 '''
 import numpy as np
+
+
+def create_normal_and_valid(img_size=256):
+    # ---------------- create normal for rendering half sphere ------
+    img_size = 256
+    x = np.linspace(-1, 1, img_size)
+    z = np.linspace(1, -1, img_size)
+    x, z = np.meshgrid(x, z)
+
+    mag = np.sqrt(x ** 2 + z ** 2)
+    valid = mag <= 1
+    y = -np.sqrt(1 - (x * valid) ** 2 - (z * valid) ** 2)
+    x = x * valid
+    y = y * valid
+    z = z * valid
+    normal = np.concatenate((x[..., None], y[..., None], z[..., None]), axis=2)
+    normal = np.reshape(normal, (-1, 3))
+    return normal, valid
+
+
 def SH_basis(normal):
     '''
         get SH basis based on normal
@@ -12,24 +32,25 @@ def SH_basis(normal):
     '''
     numElem = normal.shape[0]
 
-    norm_X = normal[:,0]
-    norm_Y = normal[:,1]
-    norm_Z = normal[:,2]
+    norm_X = normal[:, 0]
+    norm_Y = normal[:, 1]
+    norm_Z = normal[:, 2]
 
     sh_basis = np.zeros((numElem, 9))
-    att= np.pi*np.array([1, 2.0/3.0, 1/4.0])
-    sh_basis[:,0] = 0.5/np.sqrt(np.pi)*att[0]
+    att = np.pi * np.array([1, 2.0 / 3.0, 1 / 4.0])
+    sh_basis[:, 0] = 0.5 / np.sqrt(np.pi) * att[0]
 
-    sh_basis[:,1] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_Y*att[1]
-    sh_basis[:,2] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_Z*att[1]
-    sh_basis[:,3] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_X*att[1]
+    sh_basis[:, 1] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_Y * att[1]
+    sh_basis[:, 2] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_Z * att[1]
+    sh_basis[:, 3] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_X * att[1]
 
-    sh_basis[:,4] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_Y*norm_X*att[2]
-    sh_basis[:,5] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_Y*norm_Z*att[2]
-    sh_basis[:,6] = np.sqrt(5)/4/np.sqrt(np.pi)*(3*norm_Z**2-1)*att[2]
-    sh_basis[:,7] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_X*norm_Z*att[2]
-    sh_basis[:,8] = np.sqrt(15)/4/np.sqrt(np.pi)*(norm_X**2-norm_Y**2)*att[2]
+    sh_basis[:, 4] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_Y * norm_X * att[2]
+    sh_basis[:, 5] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_Y * norm_Z * att[2]
+    sh_basis[:, 6] = np.sqrt(5) / 4 / np.sqrt(np.pi) * (3 * norm_Z ** 2 - 1) * att[2]
+    sh_basis[:, 7] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_X * norm_Z * att[2]
+    sh_basis[:, 8] = np.sqrt(15) / 4 / np.sqrt(np.pi) * (norm_X ** 2 - norm_Y ** 2) * att[2]
     return sh_basis
+
 
 def SH_basis_noAtt(normal):
     '''
@@ -41,23 +62,24 @@ def SH_basis_noAtt(normal):
     '''
     numElem = normal.shape[0]
 
-    norm_X = normal[:,0]
-    norm_Y = normal[:,1]
-    norm_Z = normal[:,2]
+    norm_X = normal[:, 0]
+    norm_Y = normal[:, 1]
+    norm_Z = normal[:, 2]
 
     sh_basis = np.zeros((numElem, 9))
-    sh_basis[:,0] = 0.5/np.sqrt(np.pi)
+    sh_basis[:, 0] = 0.5 / np.sqrt(np.pi)
 
-    sh_basis[:,1] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_Y
-    sh_basis[:,2] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_Z
-    sh_basis[:,3] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_X
+    sh_basis[:, 1] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_Y
+    sh_basis[:, 2] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_Z
+    sh_basis[:, 3] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_X
 
-    sh_basis[:,4] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_Y*norm_X
-    sh_basis[:,5] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_Y*norm_Z
-    sh_basis[:,6] = np.sqrt(5)/4/np.sqrt(np.pi)*(3*norm_Z**2-1)
-    sh_basis[:,7] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_X*norm_Z
-    sh_basis[:,8] = np.sqrt(15)/4/np.sqrt(np.pi)*(norm_X**2-norm_Y**2)
+    sh_basis[:, 4] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_Y * norm_X
+    sh_basis[:, 5] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_Y * norm_Z
+    sh_basis[:, 6] = np.sqrt(5) / 4 / np.sqrt(np.pi) * (3 * norm_Z ** 2 - 1)
+    sh_basis[:, 7] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_X * norm_Z
+    sh_basis[:, 8] = np.sqrt(15) / 4 / np.sqrt(np.pi) * (norm_X ** 2 - norm_Y ** 2)
     return sh_basis
+
 
 def get_shading(normal, SH):
     '''
@@ -68,9 +90,10 @@ def get_shading(normal, SH):
     '''
     sh_basis = SH_basis(normal)
     shading = np.matmul(sh_basis, SH)
-    #shading = np.matmul(np.reshape(sh_basis, (-1, 9)), SH)
-    #shading = np.reshape(shading, normal.shape[0:2])
+    # shading = np.matmul(np.reshape(sh_basis, (-1, 9)), SH)
+    # shading = np.reshape(shading, normal.shape[0:2])
     return shading
+
 
 def SH_basis_debug(normal):
     '''
@@ -82,25 +105,26 @@ def SH_basis_debug(normal):
     '''
     numElem = normal.shape[0]
 
-    norm_X = normal[:,0]
-    norm_Y = normal[:,1]
-    norm_Z = normal[:,2]
+    norm_X = normal[:, 0]
+    norm_Y = normal[:, 1]
+    norm_Z = normal[:, 2]
 
     sh_basis = np.zeros((numElem, 9))
-    att= np.pi*np.array([1, 2.0/3.0, 1/4.0])
+    att = np.pi * np.array([1, 2.0 / 3.0, 1 / 4.0])
     # att = [1,1,1]
-    sh_basis[:,0] = 0.5/np.sqrt(np.pi)*att[0]
+    sh_basis[:, 0] = 0.5 / np.sqrt(np.pi) * att[0]
 
-    sh_basis[:,1] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_Y*att[1]
-    sh_basis[:,2] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_Z*att[1]
-    sh_basis[:,3] = np.sqrt(3)/2/np.sqrt(np.pi)*norm_X*att[1]
+    sh_basis[:, 1] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_Y * att[1]
+    sh_basis[:, 2] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_Z * att[1]
+    sh_basis[:, 3] = np.sqrt(3) / 2 / np.sqrt(np.pi) * norm_X * att[1]
 
-    sh_basis[:,4] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_Y*norm_X*att[2]
-    sh_basis[:,5] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_Y*norm_Z*att[2]
-    sh_basis[:,6] = np.sqrt(5)/4/np.sqrt(np.pi)*(3*norm_Z**2-1)*att[2]
-    sh_basis[:,7] = np.sqrt(15)/2/np.sqrt(np.pi)*norm_X*norm_Z*att[2]
-    sh_basis[:,8] = np.sqrt(15)/4/np.sqrt(np.pi)*(norm_X**2-norm_Y**2)*att[2]
+    sh_basis[:, 4] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_Y * norm_X * att[2]
+    sh_basis[:, 5] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_Y * norm_Z * att[2]
+    sh_basis[:, 6] = np.sqrt(5) / 4 / np.sqrt(np.pi) * (3 * norm_Z ** 2 - 1) * att[2]
+    sh_basis[:, 7] = np.sqrt(15) / 2 / np.sqrt(np.pi) * norm_X * norm_Z * att[2]
+    sh_basis[:, 8] = np.sqrt(15) / 4 / np.sqrt(np.pi) * (norm_X ** 2 - norm_Y ** 2) * att[2]
     return sh_basis
+
 
 def get_shading_debug(normal, SH):
     '''
@@ -111,5 +135,5 @@ def get_shading_debug(normal, SH):
     '''
     sh_basis = SH_basis_debug(normal)
     shading = np.matmul(sh_basis, SH)
-    #shading = sh_basis*SH[0]
+    # shading = sh_basis*SH[0]
     return shading
