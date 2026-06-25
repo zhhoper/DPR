@@ -2,4 +2,10 @@
 *.sh
 log_test/
 result_1024
-
+env-dpr
+result/
+result*
+__pycache__
+.idea
+res.jpg
+.vscode
